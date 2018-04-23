@@ -1,0 +1,62 @@
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "GridView";
+        settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
+        settings.SettingsEditing.BatchUpdateRouteValues = new { Controller = "Home", Action = "BatchUpdatePartial" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.KeyFieldName = "ID";
+
+        settings.ClientSideEvents.BatchEditStartEditing = "OnBatchEditStartEditing";
+        settings.ClientSideEvents.BatchEditEndEditing = "OnBatchEditEndEditing";
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Quantity";
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Price";
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.UnboundType = DevExpress.Data.UnboundColumnType.Decimal;
+            column.FieldName = "Sum";
+            column.ReadOnly = true;
+
+            column.SetEditItemTemplateContent(c => { });
+        });
+
+        settings.CustomUnboundColumnData = (sender, e) =>
+        {
+            if (e.Column.FieldName == "Sum") {
+                decimal price = Convert.ToDecimal(e.GetListSourceFieldValue("Price"));
+                int quantity = Convert.ToInt32(e.GetListSourceFieldValue("Quantity"));
+                e.Value = price * quantity;
+            }
+        };
+
+        settings.CellEditorInitialize = (s, e) =>
+        {
+            ASPxEdit editor = (ASPxEdit)e.Editor;
+            editor.ValidationSettings.Display = Display.Dynamic;
+        };
+        settings.HtmlDataCellPrepared = (sender, e) =>
+        {
+            if (e.DataColumn.FieldName == "Sum")
+                e.Cell.Attributes.Add("onclick", "event.cancelBubble = true");
+        };
+
+    });
+    if (ViewData["EditError"] != null) {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
