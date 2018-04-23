@@ -1,0 +1,65 @@
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "GridView";
+        settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
+        settings.SettingsEditing.BatchUpdateRouteValues = new { Controller = "Home", Action = "BatchUpdatePartial" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.Batch;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.KeyFieldName = "ID";
+
+        settings.ClientSideEvents.BatchEditEndEditing = "OnBatchEditEndEditing";
+
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Quantity";
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+            SpinEditProperties prop = column.PropertiesEdit as SpinEditProperties;
+            prop.MinValue = 0;
+            prop.MaxValue = 9999;
+        });
+        settings.Columns.Add(column =>
+        {
+            column.FieldName = "Price";
+            column.ColumnType = MVCxGridViewColumnType.SpinEdit;
+            SpinEditProperties prop = column.PropertiesEdit as SpinEditProperties;
+            prop.MinValue = 0;
+            prop.MaxValue = 9999;
+        });
+
+        settings.Columns.Add(column =>
+        {
+            column.UnboundType = DevExpress.Data.UnboundColumnType.Decimal;
+            column.FieldName = "Sum";
+            column.ReadOnly = true;
+            column.Settings.ShowEditorInBatchEditMode = false;
+          
+        });
+
+        settings.CustomUnboundColumnData = (sender, e) =>
+        {
+            if (e.Column.FieldName == "Sum")
+            {
+                decimal price = Convert.ToDecimal(e.GetListSourceFieldValue("Price"));
+                int quantity = Convert.ToInt32(e.GetListSourceFieldValue("Quantity"));
+                e.Value = price * quantity;
+            }
+        };
+
+        settings.CellEditorInitialize = (s, e) =>
+        {
+            ASPxEdit editor = (ASPxEdit)e.Editor;
+            editor.ValidationSettings.Display = Display.Dynamic;
+        };
+     
+
+    });
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
