@@ -8,7 +8,7 @@
 <!-- default file list end -->
 # GridView - Batch Edit - How to calculate values on the fly
 <!-- run online -->
-**[[Run Online]](https://codecentral.devexpress.com/t124603)**
+**[[Run Online]](https://codecentral.devexpress.com/t124603/)**
 <!-- run online end -->
 
 
