@@ -12,9 +12,6 @@
 * [Index.cshtml](./CS/GridViewBatchEdit/Views/Home/Index.cshtml)
 <!-- default file list end -->
 # GridView - Batch Edit - How to calculate values on the fly
-<!-- run online -->
-**[[Run Online]](https://codecentral.devexpress.com/128549548/)**
-<!-- run online end -->
 
 
 This example demonstrates how to create an unbound column that calculates the sum of other columns and changes its values on the fly when end-user changes any grid values using Batch edit mode. <br>
